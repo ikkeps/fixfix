@@ -12,16 +12,28 @@ Rectangle {
 	height: 50
 	width: ticks * timeline.scale
 	x: start * timeline.scale
-	radius: 2
+	radius: 0
 
-	border.color: selected? "white":"black"
-	border.width: selected?2:1
+	border.width: 0
 	anchors.margins: 0
 	
 	clip: true
+	
+	Rectangle {
+		color: "black"
+		x: 0
+		height: parent.height
+		width: 1
+	}
+	Rectangle {
+		color: "black"
+		x: 0
+		width: parent.width
+		height: 1
+	}
 	    
     Text {
-    	font.pixelSize: 12
+    	font.pixelSize: 11
     	text: title
     	color: snippet.selected? "white":"black"
     	x:5
@@ -32,11 +44,11 @@ Rectangle {
         id: mouseArea
         anchors.fill: parent
 		drag.axis: Drag.XAxis
-//		onClicked: {snippet.selected = !snippet.selected}     
 
 		property int offset: 0
 
 		onPressed : {
+			snippet.selected = !snippet.selected
 			offset = mouse.x/timeline.scale;
 
 			timeline.specialTick = snippet.start;
