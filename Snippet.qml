@@ -3,16 +3,20 @@ import QtQuick 2.2
 Rectangle {
 	id: snippet
 
-	property string title
-	property int ticks
-	property int start
 	property bool selected
+	property bool moving
+	property var model
 	
 
 	height: 50
-	width: ticks * timeline.scale
-	x: start * timeline.scale
+	width: model.ticks * timeline.scale
+	x: model.start * timeline.scale
+	y: model.row * 50
 	radius: 0
+	color: model.color
+
+	opacity: moving? 0.5:1.0
+
 
 	border.width: 0
 	anchors.margins: 0
@@ -34,7 +38,7 @@ Rectangle {
 	    
     Text {
     	font.pixelSize: 11
-    	text: title
+    	text: model.title
     	color: snippet.selected? "white":"black"
     	x:5
     	y:5
@@ -45,24 +49,36 @@ Rectangle {
         anchors.fill: parent
 		drag.axis: Drag.XAxis
 
-		property int offset: 0
+		property int xOffset: 0
+		property int yOffset: 0
 
 		onPressed : {
+			snippet.moving = true;
 			snippet.selected = !snippet.selected
-			offset = mouse.x/timeline.scale;
+			xOffset = mouse.x/timeline.scale;
+			yOffset = mouse.y;
 
-			timeline.specialTick = snippet.start;
-			timeline.specialTickEnabled = true;
+			timeline.specialTickStart = snippet.model.start;
+			timeline.specialTickEnd = snippet.model.start + snippet.model.ticks;
+			timeline.specialTickStartEnabled = true;
+			timeline.specialTickEndEnabled = true;
 		}
 		
 		onReleased: {
-			timeline.specialTickEnabled = false;		
+			snippet.moving = false;
+			timeline.specialTickStartEnabled = false;		
+			timeline.specialTickEndEnabled = false;		
 		}
 
 		onPositionChanged:{
-			var origStart = snippet.start;
-			snippet.start = Math.max(origStart-offset+Math.floor(mouse.x/timeline.scale), 0);
-			timeline.specialTick = snippet.start;
+			var origStart = snippet.model.start;
+			snippet.model.start = origStart+(Math.floor(mouse.x/timeline.scale)-xOffset);
+
+			timeline.specialTickStart = snippet.model.start;
+			timeline.specialTickEnd = snippet.model.start + snippet.model.ticks;
+			
+			snippet.model.row = snippet.model.row + Math.floor(mouse.y/snippet.height);
+			
 		}		
 
     }
@@ -80,19 +96,20 @@ Rectangle {
 
 
 		onPressed: {
-			timeline.specialTick = snippet.start			
-			timeline.specialTickEnabled = true
+			timeline.specialTickStart = snippet.model.start			
+			timeline.specialTickStartEnabled = true
 		}
 		
 		onReleased: {		
-			timeline.specialTickEnabled = false
+			timeline.specialTickStartEnabled = false
 		}
 		
 		onPositionChanged:{		
-			var origStart = snippet.start;
-			snippet.start = Math.min(Math.max(origStart+Math.floor(mouse.x/timeline.scale), 0), origStart+snippet.ticks-1);
-			snippet.ticks = snippet.ticks + (origStart - snippet.start);
-			timeline.specialTick = snippet.start;
+			var xDiff = Math.floor(mouse.x/timeline.scale);
+			var oldStart = snippet.model.start
+			snippet.model.start = snippet.model.start + xDiff;
+			snippet.model.ticks = snippet.model.ticks - (snippet.model.start-oldStart);
+			timeline.specialTickStart = snippet.model.start;
 		}		
 	}		
 
@@ -109,17 +126,17 @@ Rectangle {
 		drag.minimumX: timeline.scale
 		
 		onPressed: {
-			timeline.specialTick = snippet.start + snippet.ticks			
-			timeline.specialTickEnabled = true
+			timeline.specialTickEnd = snippet.model.start + snippet.model.ticks			
+			timeline.specialTickEndEnabled = true
 		}
 		
 		onReleased: {		
-			timeline.specialTickEnabled = false
+			timeline.specialTickEndEnabled = false
 		}
 		
 		onPositionChanged:{		
-			snippet.ticks = Math.max(snippet.ticks + Math.floor(mouse.x/timeline.scale), 1);
-			timeline.specialTick = snippet.start + snippet.ticks
+			snippet.model.ticks = Math.max(snippet.model.ticks + Math.floor(mouse.x/timeline.scale), 1);
+			timeline.specialTickEnd = snippet.model.start + snippet.model.ticks
 		}		
 		
 	}

@@ -20,6 +20,7 @@ ApplicationWindow {
 		        color: "lightsteelblue"
 		        Text { text: "Nothing to see here"}
 		    }
+		    
 		    Settings {
 		    }
 		}

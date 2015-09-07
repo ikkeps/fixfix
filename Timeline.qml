@@ -5,12 +5,14 @@ Rectangle {
 	id: timeline
 	property bool patternTicks : true
 	property bool secondTicks
-	property int currentTick: 19
+	property int currentTick: 22
 	
-	property bool specialTickEnabled: false
-	property int specialTick: 0
+	property bool specialTickStartEnabled: false
+	property int specialTickStart: 0
 
-	height: 200
+	property bool specialTickEndEnabled: false
+	property int specialTickEnd: 0
+
 	color: "black"
 	property int scale
 
@@ -22,13 +24,11 @@ Rectangle {
 		onClicked: {
 			parent.focus = true;
 			mouse.accepted = false;
-		}	
-	
+		}
 	}
     
     Keys.onPressed: {
 	    event.accepted = true;
-	    console.log("KEY!")
 	    
     	switch (event.key){
         	case Qt.Key_Plus:
@@ -54,11 +54,20 @@ Rectangle {
 		height: 8
 	}
 
+
 	Rectangle {
-		anchors.top: slider.bottom 
-		anchors.left: timeline.left
-		anchors.right: timeline.right
-		anchors.bottom: timeline.bottom
+		x: 10
+		y: 10
+		width: 10
+		height: 10
+		color: "black"
+	}
+
+	Rectangle {
+		y: 8
+		color: "green"
+		width: timeline.width
+		height: timeline.height-8
 	
 		Repeater {
 			model: 10
@@ -71,13 +80,9 @@ Rectangle {
 		}
 		    
 		Repeater {
-			model: 8
-			TimelineRow {
-				width: timeline.width
-				y: 50*index
-				items: [
-					"*lol", "sprite(10,20)\nspline(10)", "problem", "splash"
-				]
+			model: timelineData.len
+			Snippet {
+				model: timelineData.snippet(index)
 			}		
 		}
 	
@@ -130,11 +135,20 @@ Rectangle {
 			}
 		}
 
-		// special tick
+		// special tick start
 		Rectangle {
-			visible: timeline.specialTickEnabled	
+			visible: timeline.specialTickStartEnabled	
 			color: "#40ffffff"
-			x: timeline.specialTick * timeline.scale
+			x: timeline.specialTickStart * timeline.scale
+			height: parent.height
+			width: 1
+		}
+
+		// special tick end
+		Rectangle {
+			visible: timeline.specialTickEndEnabled	
+			color: "#40ffffff"
+			x: timeline.specialTickEnd * timeline.scale
 			height: parent.height
 			width: 1
 		}
@@ -142,6 +156,7 @@ Rectangle {
 		// current tick
 
 		Rectangle {
+			visible: false
 			color: "#ffff80ff"
 			x: timeline.currentTick * timeline.scale - 1
 			height: parent.height
