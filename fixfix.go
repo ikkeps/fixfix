@@ -1,9 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
-	"encoding/json"
 
 	"gopkg.in/qml.v1"
 )
@@ -30,7 +30,7 @@ func (s *Snippet) SetStart(start int) {
 	if start < 0 {
 		start = 0
 	}
-	
+
 	end := s.Start + s.Ticks
 
 	if start >= end {
@@ -63,7 +63,6 @@ func (t *Timeline) AddSnippet(snippet *Snippet) {
 	qml.Changed(t, &t.Len)
 }
 
-
 func main() {
 	if err := qml.Run(run); err != nil {
 		fmt.Fprintf(os.Stderr, "error: %v\n", err)
@@ -74,42 +73,34 @@ func main() {
 func loadTimeline(filename string) (*Timeline, error) {
 
 	snippets := make([]Snippet, 0, 100)
-	
+
 	f, err := os.Open(filename)
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
-	
+
 	defer f.Close()
-	
+
 	err = json.NewDecoder(f).Decode(&snippets)
-	if err != nil{
-		return nil,err
+	if err != nil {
+		return nil, err
 	}
 
 	timeline := &Timeline{}
-	for n := range snippets{
+	for n := range snippets {
 		timeline.AddSnippet(&snippets[n])
 	}
-
 
 	return timeline, nil
 }
 
 func run() error {
-	//	qml.RegisterTypes("GoExtensions", 1, 0, []qml.TypeSpec{{
-	//	    Init: func(p *S, obj qml.Object) { p.Name = "<none>" },
-	//	}})
-
 	engine := qml.NewEngine()
 	context := engine.Context()
 	timeline, err := loadTimeline("example.json")
 	if err != nil {
 		return err
 	}
-	
-
-
 
 	context.SetVar("timelineData", timeline)
 
