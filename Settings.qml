@@ -56,23 +56,16 @@ ColumnLayout {
 		Layout.fillWidth: true
 		Layout.fillHeight: false
 		text: model?model.title:""		
-		
+		property string oldText: ""
         textFormat: TextEdit.PlainText
         
-        Keys.forwardTo: [title]
-                
-        Keys.onReturnPressed: {
-        	console.log("lol");
-	    	event.accepted = false;
-			if (model){
+        onTextChanged: {
+			//this is inefficial. But only way to get working properly :[]
+			if (!!(model) && (text != oldText)){
 				model.title = text;
+				oldText = text;
 			}
 		}
-	//	onChange: {
-		//	if (model){
-//				model.title = text
-	//		}
-//		}
 	}
 
 	RowLayout {
