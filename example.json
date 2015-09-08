@@ -1,18 +1,39 @@
 [
 
 	{
-		"Title": "axazas",
+		"Title": "spline(x,float_spline)",
 		"Start": 12,
 		"Ticks": 12,
 		"Color": "#aaa",
 		"Row": 2
 	},
 	{
-		"Title": "axazas",
+		"Title": "sprite(10,10,cyborg)",
 		"Start": 2,
-		"Ticks": 122,
+		"Ticks": 42,
 		"Color": "#faa",
 		"Row": 3
+	},
+	{
+		"Title": "glitch(10,10)",
+		"Start": 20,
+		"Ticks": 5,
+		"Color": "#f0f",
+		"Row": 0
+	},
+	{
+		"Title": "glitch(10,10)",
+		"Start": 30,
+		"Ticks": 5,
+		"Color": "#f0f",
+		"Row": 0
+	},
+	{
+		"Title": "glitch(10,10)",
+		"Start": 40,
+		"Ticks": 5,
+		"Color": "#f0f",
+		"Row": 0
 	}
 
 ]

@@ -17,7 +17,6 @@ Rectangle {
 
 	opacity: moving? 0.5:1.0
 
-
 	border.width: 0
 	anchors.margins: 0
 	
@@ -77,10 +76,9 @@ Rectangle {
 			timeline.specialTickStart = snippet.model.start;
 			timeline.specialTickEnd = snippet.model.start + snippet.model.ticks;
 			
-			snippet.model.row = snippet.model.row + Math.floor(mouse.y/snippet.height);
-			
-		}		
-
+			snippet.model.row = snippet.model.row + Math.floor(mouse.y/snippet.height);			
+		}
+		
     }
 
 	MouseArea {
@@ -93,8 +91,7 @@ Rectangle {
     	drag.target: this    
 		drag.axis: Drag.XAxis
 		drag.minimumX: 0
-
-
+		
 		onPressed: {
 			timeline.specialTickStart = snippet.model.start			
 			timeline.specialTickStartEnabled = true
@@ -110,7 +107,7 @@ Rectangle {
 			snippet.model.start = snippet.model.start + xDiff;
 			snippet.model.ticks = snippet.model.ticks - (snippet.model.start-oldStart);
 			timeline.specialTickStart = snippet.model.start;
-		}		
+		}
 	}		
 
  

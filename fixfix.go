@@ -8,6 +8,8 @@ import (
 	"gopkg.in/qml.v1"
 )
 
+var timeline *Timeline // global variable! wheee!!
+
 type Snippet struct {
 	Title string
 	Color string
@@ -23,7 +25,9 @@ func (s *Snippet) SetRow(row int) {
 	if row >= 8 {
 		row = 7
 	}
-	s.Row = row
+	if timeline.HasSpace(s, s.Start, s.Ticks, row) {
+		s.Row = row
+	}
 }
 
 func (s *Snippet) SetStart(start int) {
@@ -37,19 +41,44 @@ func (s *Snippet) SetStart(start int) {
 		start = end - 1
 	}
 
-	s.Start = start
+	if timeline.HasSpace(s, start, s.Ticks, s.Row) {
+		s.Start = start
+	}
 }
 
 func (s *Snippet) SetTicks(ticks int) {
 	if ticks < 1 {
 		ticks = 1
 	}
-	s.Ticks = ticks
+	if timeline.HasSpace(s, s.Start, ticks, s.Row) {
+		s.Ticks = ticks
+	}
 }
 
 type Timeline struct {
 	snippets []*Snippet
 	Len      int
+}
+
+func (t *Timeline) HasSpace(exclude *Snippet, start, ticks, row int) bool {
+	end := start + ticks
+	for _, snippet := range t.snippets {
+
+		if snippet != exclude && snippet.Row == row {
+			sEnd := snippet.Start + snippet.Ticks
+
+			if snippet.Start >= start && snippet.Start < end {
+				return false
+			}
+			if sEnd > start && sEnd <= end {
+				return false
+			}
+			if start >= snippet.Start && end <= sEnd {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 func (t *Timeline) Snippet(n int) *Snippet {
@@ -97,7 +126,8 @@ func loadTimeline(filename string) (*Timeline, error) {
 func run() error {
 	engine := qml.NewEngine()
 	context := engine.Context()
-	timeline, err := loadTimeline("example.json")
+	var err error
+	timeline, err = loadTimeline("example.json")
 	if err != nil {
 		return err
 	}
