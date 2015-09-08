@@ -12,16 +12,24 @@ ApplicationWindow {
         orientation: Qt.Vertical
 
 		SplitView {
-	        Layout.minimumHeight: 300
+	        Layout.minimumHeight: 240
 
 		    Rectangle {
 		        id: unknown
-		        width: 400
-		        color: "lightsteelblue"
-		        Text { text: "Nothing to see here"}
+		        width: 320
+		        color: "black"
+		        Rectangle{
+		        	x: 32
+		        	y: 24
+		        	color: "white"
+		        	width: 256
+		        	height: 192
+		        	Text { text: "Nothing to see here"}
+		        }
 		    }
 		    
 		    Settings {
+		    	id: settings
 		    }
 		}
 		

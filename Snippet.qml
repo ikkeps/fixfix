@@ -15,7 +15,6 @@ Rectangle {
 	radius: 0
 	color: model.color
 
-	opacity: moving? 0.5:1.0
 
 	border.width: 0
 	anchors.margins: 0
@@ -53,7 +52,8 @@ Rectangle {
 
 		onPressed : {
 			snippet.moving = true;
-			snippet.selected = !snippet.selected
+			settings.model = snippet.model
+			
 			xOffset = mouse.x/timeline.scale;
 			yOffset = mouse.y;
 
@@ -93,6 +93,7 @@ Rectangle {
 		drag.minimumX: 0
 		
 		onPressed: {
+			settings.model = snippet.model
 			timeline.specialTickStart = snippet.model.start			
 			timeline.specialTickStartEnabled = true
 		}
@@ -123,6 +124,7 @@ Rectangle {
 		drag.minimumX: timeline.scale
 		
 		onPressed: {
+			settings.model = snippet.model
 			timeline.specialTickEnd = snippet.model.start + snippet.model.ticks			
 			timeline.specialTickEndEnabled = true
 		}

@@ -8,7 +8,7 @@
 		"Row": 2
 	},
 	{
-		"Title": "sprite(10,10,cyborg)",
+		"Title": "sprite(10,10,cyborg)\nbackground()",
 		"Start": 2,
 		"Ticks": 42,
 		"Color": "#faa",
