@@ -55,9 +55,25 @@ func (s *Snippet) SetTicks(ticks int) {
 	}
 }
 
+func (s *Snippet) Clone() *Snippet {
+	newSnippet := *s
+	return &newSnippet
+}
+
 type Timeline struct {
 	snippets []*Snippet
 	Len      int
+}
+
+func (t *Timeline) Clone(snippet *Snippet) {
+	newSnippet := snippet.Clone()
+	newSnippet.Start += newSnippet.Ticks
+	for ; ; newSnippet.Start++ {
+		if t.HasSpace(nil, newSnippet.Start, newSnippet.Ticks, newSnippet.Row) {
+			break
+		}
+	}
+	t.AddSnippet(newSnippet)
 }
 
 func (t *Timeline) HasSpace(exclude *Snippet, start, ticks, row int) bool {
@@ -126,6 +142,10 @@ func loadTimeline(filename string) (*Timeline, error) {
 func run() error {
 	engine := qml.NewEngine()
 	context := engine.Context()
+	qml.RegisterTypes("GoExtensions", 1, 0, []qml.TypeSpec{{
+		Init: func(t *Timeline, obj qml.Object) { panic("Can not create a timeline") },
+	}})
+
 	var err error
 	timeline, err = loadTimeline("example.json")
 	if err != nil {
